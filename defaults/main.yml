@@ -1,0 +1,37 @@
+---
+# Deployment mode
+influxdb__deployment_mode: "docker"
+
+# Common locations
+influxdb__path_data: "/var/lib/influxdb"
+influxdb__path_config: "/etc/influxdb"
+
+# Security
+influxdb__security_ssl_enable: False
+influxdb__security_ssl_key: "changeme"
+influxdb__security_ssl_crt: "changeme"
+influxdb__security_auth_enable: False
+influxdb__security_auth_admin_users:
+  - name: "admin"
+    pass: "changeme"
+influxdb__security_auth_other_users: []
+# List of dictionaries. Each element of the list will be a InfluxDB user
+# For example:
+# influxdb__security_auth_other_users: 
+#   - name: "user_example_1"
+#     pass: "changeme"
+#   - name: "user_example_2"
+#     pass: "changeme"
+
+# Databases
+influxdb__databases: []
+# List of dictionaries. Each element of the list will be a InfluxDB database
+# For example:
+# influxdb__databases:
+#   - database_example_1
+#   - database_example_2
+
+# Docker config
+influxdb__docker_image: "influxdb"
+influxdb__docker_tag: "1.8.4"
+...

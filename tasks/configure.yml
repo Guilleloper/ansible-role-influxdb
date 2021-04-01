@@ -1,0 +1,107 @@
+---
+- name: InfluxDB admin users creation
+  uri:
+    url: "http://localhost:8086/query?pretty=true"
+    method: POST
+    user: "admin"
+    password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
+    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}' WITH ALL PRIVILEGES"
+  no_log: True
+  with_items: "{{ influxdb__security_auth_admin_users }}"
+  when: 
+    - influxdb__security_auth_enable
+    - not influxdb__security_ssl_enable
+
+- name: InfluxDB admin users creation (SSL enabled)
+  uri:
+    url: "https://localhost:8086/query?pretty=true"
+    validate_certs: no
+    method: POST
+    user: "admin"
+    password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
+    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}' WITH ALL PRIVILEGES"
+  no_log: True
+  with_items: "{{ influxdb__security_auth_admin_users }}"
+  when: 
+    - influxdb__security_auth_enable
+    - influxdb__security_ssl_enable
+
+- name: InfluxDB non-admin users creation
+  uri:
+    url: "http://localhost:8086/query?pretty=true"
+    method: POST
+    user: "admin"
+    password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
+    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}' WITH ALL PRIVILEGES"
+  no_log: True
+  with_items: "{{ influxdb__security_auth_other_users }}"
+  when:
+    - influxdb__security_auth_other_users|length>0
+    - influxdb__security_auth_enable
+    - not influxdb__security_ssl_enable
+
+- name: InfluxDB non-admin users creation (SSL enabled)
+  uri:
+    url: "https://localhost:8086/query?pretty=true"
+    validate_certs: no
+    method: POST
+    user: "admin"
+    password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
+    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}' WITH ALL PRIVILEGES"
+  no_log: True
+  with_items: "{{ influxdb__security_auth_other_users }}"
+  when:
+    - influxdb__security_auth_other_users|length>0
+    - influxdb__security_auth_enable
+    - influxdb__security_ssl_enable
+
+- name: Databases creation
+  uri:
+    url: "http://localhost:8086/query?pretty=true"
+    method: POST
+    body: "q=CREATE DATABASE {{ item }}"
+  with_items: "{{ influxdb__databases }}"
+  when:
+    - influxdb__databases|length>0
+    - not influxdb__security_auth_enable
+    - not influxdb__security_ssl_enable
+
+- name: Databases creation (auth enabled)
+  uri:
+    url: "http://localhost:8086/query?pretty=true"
+    method: POST
+    user: "admin"
+    password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
+    body: "q=CREATE DATABASE {{ item }}"
+  with_items: "{{ influxdb__databases }}"
+  when:
+    - influxdb__databases|length>0
+    - influxdb__security_auth_enable
+    - not influxdb__security_ssl_enable
+
+- name: Databases creation (SSL enabled)
+  uri:
+    url: "https://localhost:8086/query?pretty=true"
+    validate_certs: no
+    method: POST
+    body: "q=CREATE DATABASE {{ item }}"
+  with_items: "{{ influxdb__databases }}"
+  when:
+    - influxdb__databases|length>0
+    - not influxdb__security_auth_enable
+    - influxdb__security_ssl_enable
+
+- name: Databases creation (auth and SSL enabled)
+  uri:
+    url: "https://localhost:8086/query?pretty=true"
+    validate_certs: no
+    method: POST
+    user: "admin"
+    password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
+    body: "q=CREATE DATABASE {{ item }}"
+  with_items: "{{ influxdb__databases }}"
+  when:
+    - influxdb__databases|length>0
+    - influxdb__security_auth_enable
+    - influxdb__security_ssl_enable
+...

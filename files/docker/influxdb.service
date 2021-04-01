@@ -1,0 +1,16 @@
+[Unit]
+Description=InfluxDB TSDB
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker start -a influxdb
+ExecStop=/usr/bin/docker stop -t 30 influxdb
+User=root
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
