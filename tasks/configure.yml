@@ -32,7 +32,7 @@
     method: POST
     user: "admin"
     password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
-    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}' WITH ALL PRIVILEGES"
+    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}'"
   no_log: True
   with_items: "{{ influxdb__security_auth_other_users }}"
   when:
@@ -47,7 +47,7 @@
     method: POST
     user: "admin"
     password: "{{ influxdb__security_auth_admin_users | selectattr('name', 'equalto', 'admin') | map(attribute='pass') | join }}"
-    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}' WITH ALL PRIVILEGES"
+    body: "q=CREATE USER {{ item.name }} WITH PASSWORD '{{ item.pass }}'"
   no_log: True
   with_items: "{{ influxdb__security_auth_other_users }}"
   when:
